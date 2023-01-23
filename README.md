@@ -9,6 +9,7 @@ A GUI built to support a machine learning algorithm that predicts the cost of a 
 - Power
 - Engine size
 
-Data was webscraped from the autotrader website
-GUI built using tkinter and customtkinter
-ML model was trained and exported using sckitlearn and pickle
+Some points about the project:
+- Data was webscraped from the autotrader website
+- GUI built using tkinter and customtkinter
+- ML model was trained and exported using sckitlearn and pickle
