@@ -9,6 +9,7 @@ A GUI built to support a machine learning algorithm that predicts the cost of a 
 - Power
 - Engine size
 ---
+Initial  GUI shown below
 ![alt text](https://github.com/SuperSalcedo22/Car-prediction-GUI/blob/main/Initial%20frame.png "Preview")
 
 Some points about the project:
