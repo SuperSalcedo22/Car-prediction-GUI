@@ -106,6 +106,8 @@ max_size = 10
 
 based = 'Based on the following input variables:'
 
+disclaimer = 'Please note: this is only an estimate, for a more accurate cost please contact Autotrader directly'
+
 '''
 Functions
 '''
@@ -745,6 +747,14 @@ def load_frame2():
                            font = ("Rockwell",24),
                               command = load_frame1
                           ).place(rely=0.75,relx=0.38, anchor=E)
+    
+    # disclaimer mesage
+    disclaimer_label = tk.Label(frame2, 
+                      text=disclaimer,
+                      bg = background,
+                      fg = "white",
+                      font=("Rockwell", 20)
+                     ).place(rely=0.6,relx=0.5,anchor=CENTER)    
 
     # convert to dollars
     next_page = ck.CTkButton(master=frame2,
