@@ -27,14 +27,16 @@ for i in range(len(makenmod_df)):
     model_dict[makenmod_df['make'][i]] = makenmod_df['model'][i].split('#')
     
 ######## creating the fuel type variable
-# importing the csv
-fuel_df = pd.read_csv('fuel.csv')
+fuel_list = ['Bi Fuel',
+             'Diesel',
+             'Diesel Hybrid',
+             'Petrol',
+             'Petrol Hybrid',
+             'Petrol Plug-in Hybrid']
 
-# putting the values in a dictionary
-fuel_dict = {}
-for i in range(len(fuel_df)):
-    fuel_dict[fuel_df['fueltype'][i]] = fuel_df['code'][i]
-fuel_list = list(fuel_dict.keys())
+#creating the dictionary and filling with zero values
+fuel_dict = {x: 0 for x in fuel_list}
+
 
 ######## creating the bodytype variable
 # importing the csv
@@ -46,13 +48,7 @@ for i in range(len(type_df)):
 bt_list = list(type_dict.keys())
 
 ######## creating the transmission variable
-# importing the csv
-trans_df = pd.read_csv('trans.csv')
-
-trans_dict = {}
-for i in range(len(trans_df)):
-    trans_dict[trans_df['transmission'][i]] = trans_df['code'][i]
-trans_list=list(trans_dict.keys())
+trans_list= ['Automatic','Manual']
 
 ####### creating the car make
 # importing the csv
@@ -65,7 +61,7 @@ for i in range(len(make_df)):
 make_list = list(make_dict.keys())
 
 ###### MAE found from the model
-mae_perc = 0.2111973523463954
+mae_perc = 1247/6697
 
 '''
 Setting up the interface
@@ -184,28 +180,49 @@ def convert_eu():
     label.config(text=f'€{lower_eu}-€{upper_eu}') 
     
 def predict():
-    '''Converting values to encoding and importing the ML algorithm'''
+    '''Importing the ML algorithm'''
     
-    #using the dictionary of encoded values
+    #using the dictionary of encoded values and the one hot encoded values 
     #the user input of categorical variables are converted and put into an array
+    
+    # one hot encoded transmission before inputting into the machine learning model
+    if cb_values['Trans'] == 'Automatic':
+        trans_auto = 1
+        trans_man = 0
+    else:
+        trans_auto = 0
+        trans_man = 1
+        
+    # one hot encoding the fuel type to 1 based on the user input
+    fuel_dict[cb_values['Fuel']] = 1
+    
+    global user_input
+    # putting the values into an array to feed into the machine learning algorithm
     user_input = [[
+        trans_auto,
+        trans_man,
+        fuel_dict[fuel_list[0]],
+        fuel_dict[fuel_list[1]],
+        fuel_dict[fuel_list[2]],
+        fuel_dict[fuel_list[3]],
+        fuel_dict[fuel_list[4]],
+        fuel_dict[fuel_list[5]],
         values['Mileage'],
         values['Size'],
         values['Power'],
         values['Age'],
-        type_dict[cb_values['Bt']],
-        trans_dict[cb_values['Trans']],
-        fuel_dict[cb_values['Fuel']],
-        make_dict[cb_values['Make']]
+        make_dict[cb_values['Make']],
+        type_dict[cb_values['Bt']]
     ]]
     
+    
     # loading the machine learning model from a saved file
-    with open("rf_model.pkl","rb") as file:
+    with open("randomforest_regressor2.pkl","rb") as file:
         loaded_model = pickle.load(file)
     
     # making the prediction using the model and array
     global prediction
-    prediction = loaded_model.predict(user_input)    
+    prediction = loaded_model.predict(user_input)  
     
 def check_values():
     '''checks that the inputted values are numerical and within a reasonable range'''
@@ -748,7 +765,7 @@ def load_frame2():
                               command = load_frame1
                           ).place(rely=0.75,relx=0.38, anchor=E)
     
-    # disclaimer mesage
+    # disclaimer message
     disclaimer_label = tk.Label(frame2, 
                       text=disclaimer,
                       bg = background,
